@@ -1,0 +1,47 @@
+
+Comp 557 A4 Grading Scheme
+
+Q1
+1) -2 if not a binary threshold function
+   -5 if question is attempted but skin is not highlighted
+   -10 if not done
+
+2) -5 if attempted but bone not highlighted
+   -10 if not done
+
+3) -10 if no discernable feature is highlighted/if same as above
+   -10 if not done
+
+Q1 out of 30 points. 10 points per subquestion
+
+
+
+Q2  
+ -5 no comments explaining their method
+
+    For those who implemented angle-axis rotation: 
+ -2 if the degenerate cases (angle = 0/180)
+    were not accounted for in the case of angle-axis rotation
+
+    Note that some students observed that part of the head would disappear depending on viewing angle (e.g. part of the chin missing).
+    This issue is attributed to the fact that a second rotation is needed to align the quads' up with cam up to prevent the quads from rotating.
+    Otherwise the quads do not cover the entire texture for certain directions. 
+    Because this was not made explicit on the discussion board, points will not be deducted.
+
+    For those using GL matrix modes:
+ -2 if they forgot to push/pop matrix if using GL modes
+ -5 if they did not apply rotation to both GL_TEXTURE and GL_MODELVIEW
+
+    For those who constructed a matrix:
+ -5 transformation matrix not constructed properly/also applies for errors in inverse lookat matrix approach
+ -2 if instead of using matrix modes, they did: 'quad_coord = np.dot(M, quad_coord)' but quad_coord is not constructed properly 
+    or incorrect z coordinate when drawing (e.g. they may have had to replace z with quad_coord[2][i])
+ 
+ -5  if quads exit bounding box/volume does not remain centered 
+ -10 if it works for only one direction (e.g. only rotation about y-axis but no other), or if it stops working past certain angles. 
+ -20/-25 if attempted but nothing appears on screen (blank screen), or if incomplete. (Basically students receive >= 5 pts if they started but did not complete enough)
+ -30 if not attempted 
+	
+
+ 
+	

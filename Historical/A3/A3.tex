@@ -1,0 +1,167 @@
+\documentclass[12pt]{article}
+
+ \usepackage{graphicx}
+ \usepackage{amsmath}
+ \usepackage{amssymb}
+ \usepackage{algorithm}
+ \usepackage{algorithmic}
+
+\pagestyle{plain}
+
+\begin{document}
+
+\begin{center}
+{\bf {\Large COMP 557 \hspace{1cm} Assignment 3} }
+\end{center}
+
+\begin{tabbing}
+Instructor: \= \hspace{2cm} \= Prof. Michael Langer\\
+Teaching Assistant: \> \> Marta Kersten  \\
+Posted: \> \> Sat. Nov. 17, 2007   \\
+Due:   \> \> Tues.  Dec. 4, 2007  (midnight) \\ \\
+{\bf This assignment is worth 15 points.   Late policy:  2 points per day.} 
+\end{tabbing}
+
+
+\section*{3D Texturing for Volume Rendering}
+
+Volume rendering is a useful technique for visualizing three
+dimensional arrays of volumetric data obtained through sampling,
+simulation or modeling techniques. In lecture 18, we looked at a
+number of different techniques for visualizing volumetric data. In
+this assignment you will create a simple volume renderer using
+OpenGL's 3D texturing methods.
+
+
+The 3D texture approach is a direct data visualization technique which
+uses 2D or 3D textured data slices and combines the slices using
+compositing (blending). The 3D texture approach produces equivalent
+results to ray casting, where each image pixel is built up ray by ray.
+However, it is much quicker because it takes advantage of the spatial
+coherence of the volume. In 3D texturing, we "cast" one 2D layer or
+slice at a time and blend the slices together.
+% -- this results in a
+%much faster algorithm than ray casting.
+
+\section*{Requirements:}
+
+You are given base code that sets up a 3D RGBA texture (your volume)
+and a bounding box for your volume. Your task is to write the volume
+rendering function, {\tt drawVolume()}, which renders the volume
+within the bounding box.
+
+The texture is $4 \times 4 \times 4$.  The colors of the four depth
+layers are red, green, blue, and magenta (purple).  The opacity value
+({\tt OPACITY}) is constant over the box, except that one of the
+interior points is given an opacity of 1.  Texture values are
+interpolated, and this single point with opacity 1 
+results in a blurred ``mass'' inside the volume.
+
+Here is the sequence of steps you must follow to render the volume:
+\begin{enumerate}
+\item  Find the closest and furthest vertex of the bounding box,
+  relative to the camera position.  
+
+\item For a given depth plane between the closest and furthest vertex,
+  compute the polygon that is the intersection of this depth plane and
+  the bounding volume.  By definition, this polygon is {\it
+    perpendicular to the viewing direction}.  You can compute the
+  vertices of the polygon by intersecting the plane with the edges of
+  the bounding box.  You will use the resulting vertices for texture
+  mapping.
+
+  The RIGHT mouse buttom translates the eye
+  position.  As the eye position changes, the view direction
+  changes as well so that the eye always looks at the origin.  The
+  result is that the orientation of each polygon slice will change as
+  the eye moves so that the polygon remains perpendicular to the
+  viewpoint.
+
+  The LEFT mouse button uses {\tt glRotate()} to rotate the bounding
+  box. The purpose of the rotation is to allow you to peek at the
+  fixed polygon slice(s) from different viewpoints relative to the
+  box.
+
+%It does not update the view direction and therefore will not create 
+%slices perpendicular to the view plane. 
+Note that when you use the LEFT mouse button, the world coordinates of
+the box change with the rotation, but the viewing position does not.
+The rotation thus affects, for example, the distance to the closest
+and furthest point on the box.  However, the rotation should not
+affect the position and orientation of the polygon slices  which
+  should remain fixed relative to the box.  (If this is unclear,
+  please see me.)
+
+Finally, problems with the compositing order can arise when the rotation is
+  more than $\pm$ 90 degrees.  So, your solution only needs to work for
+  rotations up to 90 degrees.
+
+\item Sort the vertices of a polygon in either clockwise or
+  counter-clockwise order so that the polygon is convex.  One way to
+  do this is to pick a point in the interior of the polygon (e.g. the
+  average position of the vertices) and then use the C function {\tt
+    atan2} to compute the angle of each vertex relative to some chosen
+  coordinate system with origin at this interior point.  Then, sort on this angle.
+
+\item Choose texture coordinates to texture the polygon properly with
+  respect to the 3D texture data.
+
+\item Once you have the above working for one polygon, generalize it
+   so that it works for a sequence of polygons.  You will need to
+  enable and disable blending of the slices using {\tt
+    GL\_BLEND}. \newline Use {\tt glBlendFunc(GL\_SRC\_ALPHA,
+    GL\_ONE\_MINUS\_SRC\_ALPHA)} to composite the slices.
+
+  To avoid complications with OpenGL's z buffer, you must
+  render {\it back to front}.  Choose your slices so that they span
+  the full range of depths -- from the furthest vertex to the closest.
+  Note that this range of depths will change as the eye position
+  changes.
+
+%//(Hint: you
+%can describe your plane as a point and a normal, and intersect each of
+%the lines of the bounding box with the plane).
+
+\end{enumerate} 
+
+\noindent
+  HINT: Use the constant {\tt NUMSLICES} to control how many polygon
+  slices you use.  Begin by setting this constant to 1 and by setting
+  the depth of your perpendicular plane to be midway between the
+  closest and further vertex.
+
+
+
+%Use {\tt
+%    glBlendEquation( GL\_FUNC\_ADD )} and 
+%{\tt glBlendFunc( GL\_ONE, GL\_ONE )} to  accumulate intensities.  
+
+
+\section*{Hand-in Instructions:}
+
+\begin{enumerate}
+\item Hand in your files, including a README file that describes
+any issues or limitations your code may have.
+\item Use the handin command to submit the assignment, as in A1 and A2.
+\item The programs will be tested on SOCS machines so if you are
+  working from home then make sure you test it on the SOCS machines
+  before handing it in.
+\item You must properly comment your code.  
+\item In addition to {\tt OpenGL: A Primer}, here are some good beginning references for the assignment: 
+\begin{itemize}
+\item  \begin{verbatim} http://www.opengl.org \end{verbatim}
+\item  \begin{verbatim} http://nehe.gamedev.net/default.asp \end{verbatim}
+\item  \begin{verbatim} http://fly.cc.fer.hr/~unreal/theredbook/ \end{verbatim}
+\item  \begin{verbatim} http://www.lighthouse3d.com/opengl/glut/index.php?2 \end{verbatim}
+\end{itemize}
+\end{enumerate}
+
+
+\section*{Starter Code:}
+You do not have to set up the general graphics framework for the
+assignment. In {\tt main.c} you will find the code that sets up the viewing window, adds mouse functionality etc. The code is set up to do perspective projection, note however that for orthographic you could simply replace gluPerspective with gluOrtho. 
+You are also given an XYZ class (a point/vector class) which you can make use of.  The code already sets up a RGBA texture and the viewDir vector for you.  It also draws a cube (the bounding box of the volume) on screen. You should render your slices within the cube. 
+
+You should take time to read the comments and understand how the graphics application is set up.
+
+\end{document}

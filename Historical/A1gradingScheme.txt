@@ -1,0 +1,24 @@
+Question 1: Make a scene ( /30)
+
+- Floor. (/ 10)  - 5 if the floor is not visible in Viewport 1.
+- Used all OpenGL transformations. ( /15)
+- Proper use of push and pop. ( /5)
+
+Question 2: DrawMovingViewVolume ( /10)
+
+- Proper motion of the view volume. 
+  (-5 if directions are flipped
+   -5 if order of pan/tilt is  glRotatef(tilt, 1, 0, 0)  
+                               glRotatef(-pan, 0, 1, 0)  
+      instead of other way around)
+
+Question 3: Normalized view coordinates ( /30)
+
+- Normalization of the scene. (/ 10)
+- Proper use of the P matrix (/ 10)
+- Correct world to camera transformation, with pan and tilt. (/10)
+
+Question 4: Flying camera  ( /30)
+
+- Part 1: Call gluLookat with appropriate parameters and draw scene. ( /10)
+- Part 2: Set GL_PROJECTION  (/10)  and GL_MODELVIEW (/10)

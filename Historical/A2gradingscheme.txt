@@ -1,0 +1,54 @@
+Here is the Grading scheme used for A2.
+
+1. Koch Pyramid (20 points)
+
+   One level (10 points)
+	60 degree angle: -5
+	Wrong normal -5
+   Recursive (10 points)
+       If that doesn’t work, check if a pyramid of depth one works.
+       Wrong rotation before recursion (smaller pyramids are going inside the larger pyramid) -5
+
+
+2. L-system (30 points)
+
+   exec_draw_cmd(20 points)
+        Push/pop issues : - 4
+        not align with X: -4
+        translate: -4
+        color spilled: -4
+   Draw three plants (10 points)
+         Not using all features (eg all lines.) -3
+
+3. Hermite Curves (20 points)
+
+    returned a matrix -5 => Tests will fail probably
+    The return statement can be changed to "return (p.getA1(),m.getA1())"  
+     If tests are ok, give full mark. Else, give part marks where it fails. 
+   
+   add_points(10 points)
+   evaluate_curve_segment(10 points)
+
+
+4. Bicubic Patch (30 points)
+   
+   If tests are ok and color normalization is ok, give full marks. 
+   Else, give part marks where it fails. Still check for rendering.
+
+   evaluate(10 points)
+   set_color_from_XYZ(5 points)
+        Not normalized between 0 and 1. -2
+   draw_scene(15 points)	
+        Not normalized. -0  [MODIFIED Mar. 29:  It used to say -5.  
+        ITS OK IF SCENE GEOMETRY IS NOT NORMALIZED.  THIS WAS NOT A REQUIREMENT OF THE ASSIGNMENT.]
+
+5. Garden Scene(20 points)
+
+   Ground is a bicubic patch (5 points)
+   LSystem(5 points)
+   Ugly trees(-1 point)
+   Tiles(10 points)
+   LSystems (5 points)
+  
+   Any issues here with normals or positions I remove 5 points.
+

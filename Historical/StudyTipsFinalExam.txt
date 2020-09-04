@@ -1,0 +1,46 @@
+When studying for the final exam, if you are very short on
+time and you must skip some of the post-midterm material, 
+then I would recommend you skip items from the list below.  
+
+For the pre-midterm material,  you should concentrate
+on what you need for the post midterm material.  
+
+[April 25:  Added  more  details on what you can cut from pre-midterm material.]
+
+1-8 -  [nothing to cut]
+
+9  -  Skip entire lecture (since material was covered on Assignment 2)
+      
+10 -  details of derivation of bicubic (although you should 
+      understand the main idea of what is being done there)
+
+11 -  simplification and subdivision
+
+12 -  OpenGL lights and materials,  (slides 27-33)
+   -  bidirectional reflectance distribution function (BRDF)
+
+16 -  [nothing to cut]
+
+17 -  Details of Cal II calculation of normals for bump mapping.
+
+18 -  [nothing to cut] 
+
+19 -  Real time rendering of shadows: OpenGL pipeline (slides 18-21)
+   -  How I used ambient occlusion in my research (slides 35-37)
+
+20 -  OpenGL blending  (slides 25-35)
+   -  chromakeying revisited: pulling a matte (slides 36-41)
+
+21 -  OpenGL fog   (slides 16-24)
+   -  Rendering level surfaces  (slides 35-39)
+
+23 -  Physical vs. perceived color
+
+24 -  Computing image blur. (slides 11, 12)
+   -  Computing a high dynamic range image. (slides 33,34)
+
+25 -  Display Calibration 2 i.e. without photometer 
+   -  Limitations of 'global tone mapping operators'  
+
+
+Other than that, I wish you good luck.  May the force be with you!

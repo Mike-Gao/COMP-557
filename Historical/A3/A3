@@ -1,0 +1,112 @@
+\documentclass[12pt]{article}
+
+ \usepackage{graphicx}
+ \usepackage{amsmath}
+ \usepackage{amssymb}
+ \usepackage{algorithm}
+ \usepackage{algorithmic}
+
+\pagestyle{plain}
+
+\begin{document}
+
+\title{COMP-557 Assignment 3}
+\author
+{
+Posted:  Fri. Nov. 16, 2007
+Due Date:   Tues.  Dec. 4, 2007
+\\
+}
+\date{}
+\maketitle
+
+
+{\bf This assignment is worth 15 points.   Late policy:  2 points will be removed for each day.} 
+
+\section*{3D Texturing for Volume Rendering}
+
+Volume rendering is a useful technique for visualizing three
+dimensional arrays of volumetric data obtained through sampling,
+simulation or modeling techniques. In lecture 18, you looked at a
+number of different techniques for visualizing volumetric data. In
+this assignment you will create a simple volume renderer using
+openGL's 3D texturing methods.
+
+
+The 3D texture approach is a direct data visualization technique which
+uses 2D or 3D textured data slices and combines the slices using
+blending. The 3D texture approach produces equivalent results to ray
+casting, where each image pixel is built up ray by ray.  However, it
+is much quicker because it takes advantage of the spatial coherence of
+the volume. In 3D texturing, we "cast" one 2D layer or slice at a time
+and blend the slices together -- this results in a much faster
+algorithm than ray casting.
+
+\section*{Requirements:}
+
+You are given base code that sets up a 3D RGBA texture (your volume)
+and a bounding box for your volume. Your task is to write the volume
+rendering function, \texbf{drawVolume()}, which renders the volume
+within the bounding box.
+
+In order to help you develop your 3D texture volume rendering
+algorithm, below is a description of the steps you'll need to do:
+\begin{enumerate}
+
+\item Find the closest and furthest vertex of the bounding box to your
+camera position.  (To avoid complications with OpenGL's z buffer, you
+will render {\it back to front}, and so you should start your slices
+at the furthest point from the eye and end at the closest point.)
+
+\item Find the vertexpoint that lies at the same
+distance but on the view direction vector (where the view direction is
+the vector from eye to lookat). This is the point at which you will
+start to render your slices. In doing this, you ensure that as
+viewpoint and direction of view changes, you keep your slices
+perpendicular to the camera.
+
+\item Compute a sequence of polygons that cut through the data
+perpendicular to the direction of view.  That is, each polygon defined
+by the intersection of the bounding box with a plane that is
+perpendicular to the view direction.  You can compute the vertices by
+intersecting a given perpendicular plane with the edges of the
+bounding box.  You will use the resulting vertices for texture
+mapping.
+
+%//(Hint: you
+%can describe your plane as a point and a normal, and intersect each of
+%the lines of the bounding box with the plane).
+
+\item Sort the vertices in either clockwise or counter-clockwise order as they may not be in this order.  Then use texture coordinate generation to texture the slice properly with respect to the 3D texture data. (Hint: think of a convex hull). 
+ 
+\item Render each slice as a textured polygon, from back to front. Use the left mouse button which rotates the screen to see what happens when you don't use perpendicular slices.  Use CTRL + left mouse button to rotate the eye, and compare what happens when you do use perpendicular slices to the camera.
+
+\item Enable blenging  of the slices using GL\_BLEND. Use glBlendEquation( GL\_FUNC\_ADD ) and glBlendFunc( GL\_ONE, GL\_ONE ) to  accumulate intensities.  
+
+\end{enumerate} 
+\section*{Hand-in Instructions:}
+
+\begin{enumerate}
+\item Hand in your files along with a screenshot of your solar system.  You must include a README file with an explanation of the scene you have constructed as well as any issues or limitations your code may have.
+\item Use the handin command to submit the assignment. Complete instructions
+on how to use handin are given at \begin{verbatim} http://www.cs.mcgill.ca/socsinfo/handin/
+  \end{verbatim}
+\item The programs will be tested on SOCS machines so if you are working from home then make sure you test it on the SOCS machines before handing it in. 
+\item You must properly comment your code.  
+\item In addition to \textit{OpenGL: A Primer}, here are some good beginning references for the assignment: 
+\begin{itemize}
+\item  \begin{verbatim} http://www.opengl.org \end{verbatim}
+\item  \begin{verbatim} http://nehe.gamedev.net/default.asp \end{verbatim}
+\item  \begin{verbatim} http://fly.cc.fer.hr/~unreal/theredbook/ \end{verbatim}
+\item  \begin{verbatim} http://www.lighthouse3d.com/opengl/glut/index.php?2 \end{verbatim}
+\end{itemize}
+\end{enumerate}
+
+
+\section*{Starter Code:}
+You do not have to set up the general graphics framework for the assignment. In \textit{main.c} you will find the code that sets up the viewing window, adds mouse functionality etc. The code is set up to do perspective projection, note however that for orthographic you could simply replace gluPerspective with gluOrtho. 
+You are also given an XYZ class (a point/vector class) which you can make use of.  The code already sets up a RGBA texture and the viewDir vector for you.  It also draws a cube (the bounding box of the volume) on screen. You should render your slices within the cube. 
+
+You should take time to read the comments and understand how the graphics application is set up.
+
+\end{document}
