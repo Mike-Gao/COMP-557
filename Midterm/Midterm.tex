@@ -10,7 +10,6 @@
 \usepackage{amsmath}
 \usepackage{latexsym}
 \usepackage{enumerate}
-\usepackage{listings}
 \usepackage{graphicx}
 \setlength{\parskip}{1pc}
 \setlength{\parindent}{0pt}
@@ -19,7 +18,7 @@
 \setlength{\oddsidemargin}{0pc}
 \setlength{\evensidemargin}{0pc}
 \setlength{\textwidth}{6.5in}
-
+\usepackage{minted}
 \newcommand{\answer}[1]{
 \newpage
 \noindent
@@ -35,38 +34,7 @@
 }
 \usepackage{xcolor}
 
-\definecolor{commentsColor}{rgb}{0.497495, 0.497587, 0.497464}
-\definecolor{keywordsColor}{rgb}{0.000000, 0.000000, 0.635294}
-\definecolor{stringColor}{rgb}{0.558215, 0.000000, 0.135316}
-
-\lstset{ %
-  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
-  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
-  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
-  breaklines=true,                 % sets automatic line breaking
-  captionpos=b,                    % sets the caption-position to bottom
-  commentstyle=\color{commentsColor}\textit,    % comment style
-  deletekeywords={...},            % if you want to delete keywords from the given language
-  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
-  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
-  frame=tb,	                   	   % adds a frame around the code
-  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
-  keywordstyle=\color{keywordsColor}\bfseries,       % keyword style
-  language=c,                    % the language of the code (can be overrided per snippet)
-  otherkeywords={*,...},           % if you want to add more keywords to the set
-  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
-  numbersep=5pt,                   % how far the line-numbers are from the code
-  numberstyle=\tiny\color{commentsColor}, % the style that is used for the line-numbers
-  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
-  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
-  showstringspaces=false,          % underline spaces within strings only
-  showtabs=false,                  % show tabs within strings adding particular underscores
-  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
-  stringstyle=\color{stringColor}, % string literal style
-  tabsize=2,	                   % sets default tabsize to 2 spaces
-  title=\lstname,                  % show the filename of files included with \lstinputlisting; also try caption instead of title
-  columns=fixed                    % Using fixed column width (for e.g. nice alignment)
-}
+\usemintedstyle{friendly}
 
 \begin{document}
 
@@ -75,12 +43,12 @@
 
 \answer{1 -- Coordinate Frame}
 
-\begin{lstlisting}
+\begin{minted}{glsl}
 // normal vector is n, n dot p is the point, let s, t be coordinates
 Matrix4d coordFrame( const Vec3f &n, const Vec3f &p)
 {
-  // if it is near x axis
   Vec3f s,t;
+  // if n is near x axis
   if(n.x > 0.9f) {
     s = Vec3f (0.0 f, 1.0 f, 0.0 f );
   } else {
@@ -96,7 +64,7 @@ Matrix4d coordFrame( const Vec3f &n, const Vec3f &p)
     0, 0, 0, 1
   })
 }
-\end{lstlisting}
+\end{minted}
 
 
 % PROBLEM 2
@@ -104,7 +72,7 @@ Matrix4d coordFrame( const Vec3f &n, const Vec3f &p)
 \answer{2 --  Rotation Using Similarity Transform}
 
 
-Assume the axis pass through $(x_1, y_1, z_1)$ and $(x_2, y_2, z_2)$
+Assume the axis pass through two points, $P_1=(x_1, y_1, z_1)$ and $P_2=(x_2,y_2,z_2)$
 \begin{enumerate}[(1)]
 
 \item
@@ -118,29 +86,35 @@ $ T = \begin{pmatrix}
 \end{pmatrix}$
 
 \item
-Rotate axis into one of the original axis, Fix z, let u be a unit vector $(p,q,r)$
+Rotate space about the x axis so that the rotation axis lies in the xz plane.
 
-Project $u$ onto yz-plane to get $u'$ and rotate by $\alpha$ in order to get $u$ in xz-plane
+Let u be a unit vector $(p,q,r)$ along the rotation axis. 
 
-$u'=\sqrt{q^2+r^2}$, $cos\alpha = r/u' $ $sin\alpha = q/u'$
+Project $u$ onto yz-plane, let $s=\sqrt{q^2+r^2}$ be the length of the projection. Rotate by $\alpha$ in order to get $u$ in xz-plane
+
+$cos\alpha = \frac{r}{s} $ $sin\alpha = \frac{q}{s}$
 $ Rx = \begin{pmatrix}
 1 & 0 & 0 & 0\\
-0 & \frac{r}{u'} & -\frac{q}{u'} & 0\\
-0 & \frac{q}{u'} & \frac{r}{u'} & 0\\
+0 & \frac{r}{s} & -\frac{q}{s} & 0\\
+0 & \frac{q}{s} & \frac{r}{s} & 0\\
 0 & 0 & 0 & 1
 \end{pmatrix}$
 
 \item
-We then rotate $u'$ to overlap z-axis, $cos\beta = u'/||u|| = u'$ $sin\beta = p/||u|| = p $
+We then rotate by $\beta$ so the axis overlap the z-axis:
+
+$cos\beta = \frac{s}{||u||}= s$ $sin\beta = \frac{-p}{||u||} = -p $
+
 $ Ry = \begin{pmatrix}
-u' & 0 & -p & 0\\
+s & 0 & -p & 0\\
 0 & 1 & 0 & 0\\
-p & 0 & u & 0\\
+p & 0 & s & 0\\
 0 & 0 & 0 & 1
 \end{pmatrix}$
 
 \item
-We then rotate around z-axis by $\theta$
+We then rotate around z-axis by the given angle $\theta$
+
 $ Rz = \begin{pmatrix}
 cos\theta & -sin\theta & 0 & 0\\
 sin\theta & cos\theta & 0 & 0\\
@@ -148,7 +122,7 @@ sin\theta & cos\theta & 0 & 0\\
 0 & 0 & 0 & 1
 \end{pmatrix}$
 
-Finally, $M=T^{-1}R_x^{-1}R_y^{-1}R_zR_yR_xT$
+Finally, $p'=T^{-1}R_x^{-1}R_y^{-1}R_zR_yR_xTp$
 \end{enumerate}
 
 
@@ -272,90 +246,88 @@ So the light should be at $\begin{pmatrix}0\\3\\-\frac{18}{11}\\1\end{pmatrix}$
 \answer{7 -- Debug the Given Bling Phong Implementation}
 
 Vertex Shader
-\begin{lstlisting}
+\begin{minted}{glsl}
 #version 400 core
 uniform mat4 M;
-// modeling matrix
 uniform mat4 V;
-// view matrix
 uniform mat4 P;
-// projection matrix
-uniform mat3 MinvT; // inverse transpose of linear part of M
-uniform mat3 VinvT; // inverse transpose of linear part of V
+uniform mat3 MinvT;
+uniform mat3 VinvT;
 
 in vec3 VertexNormal;
 in vec4 VertexPosition;
 
-out vec4 PositionForFP; // camera coordinates
+out vec4 PositionForFP;
 out vec3 NormalForFP;
-// interpolate the normalized surface normal
 
 void main() {
 
-NormalForFP = MinvT * VinvT * VertexNormal; // Should change to NormalForFP= normalize(V*MinvT* vec4(VertexNormal,0))
+// FIX: VinvT is used instead of V
+// Should change to 
+// vec4 tmp = V*MinvT* vec4(VertexNormal,0);
+// NormalForFP= normalize(tmp.xyz)
+NormalForFP = MinvT * VinvT * VertexNormal; 
 
+// FIX: PositionForFP = VinvT * VertexPosition
 PositionForFP = V * M * VertexPosition;
-
 gl_Position = P * V * M * VertexPosition;
+
 }
-\end{lstlisting}
+\end{minted}
 
 \newpage
 
 Fragment Shader
-\begin{lstlisting}
+\begin{minted}{glsl}
 #version 400 core
 uniform vec3 LightColor;
-// rgb intensity of light
-uniform vec3 LightPosition; // light position in camera coordiantes
+uniform vec3 LightPosition;
 uniform float Shininess;
-// exponent for Blinn-Phong model
 uniform vec3 kd;
-// diffuse material property
 
-in vec4 PositionForFP; // fragment position in camera coordinates
+in vec4 PositionForFP;
 in vec3 NormalForFP;
-// normal at each fragment in camera coordinates
 
 out vec4 FragColor;
 
 void main() {
 
-vec3 LightDirection = PositionForFP - LightPosition; // Should change to LightDirection = normalize(LightPosition - PositionForFP)
+// FIX: Direction should go to the light.
+// Should change to normalize(LightPosition - PositionForFP)
+vec3 LightDirection = PositionForFP - LightPosition;
 
-float diffuse = dot( NormalForFP, LightDirection ); // Should change to max(dot(NormalForFP, LightDirection), 0)
+// FIX: Diffuse may go negative in the original implementation.
+// Should change to max(dot(NormalForFP, LightDirection), 0)
+float diffuse = dot( NormalForFP, LightDirection ); 
 
-vec3 ViewDirection = vec3(0,0,0) - PositionForFP; // Should change to normalize (vec3(0,0,0) - PositionForFP)
+// FIX: Should change to normalize (vec3(0,0,0) - PositionForFP)
+vec3 ViewDirection = vec3(0,0,0) - PositionForFP; 
 
-HalfVector = (LightDirection + ViewDirection) / 2; // Should change to normalize (LightDirection + ViewDirection)
+// FIX: HalfVector not unit verctor, also shouldn't divide by 2.
+// Should change to normalize (LightDirection + ViewDirection)
+HalfVector = (LightDirection + ViewDirection) / 2; 
 
 float specular = max(0.0, dot(NormalForFP, HalfVector));
 
 if (diffuse == 0.0) {
-
 specular = 0.0;
-
 } else {
-
 specular = pow( specular, Shininess );
-
 }
-
 vec3 scatteredLight = kd * LightColor * diffuse;
-
+// FIX: ks default to 1
 vec3 reflectedLight = LightColor * specular;
-
 vec3 rgb = min( scatteredLight + reflectedLight, vec3(1,1,1) );
 
 FragColor = vec4( rgb, 1 );
 }
-\end{lstlisting}
+\end{minted}
 
 
 % PROBLEM 8
 
 \answer{8 -- Ken Museth Keynote}
-Yes, I actually looked into his work of OpenVDB, apparently its very widely used as a library of manipulating sparse volumetric data. In addition to Ken Museth's Keynote, I also attended Papers 2 Waves. I was only familiar with J. Tessendorf's Work (Clemson) prior to coming to SCA 2020, its very refreshing to see new development on procedural generation of ocean waves.
+Yes, I actually looked into his work of OpenVDB, apparently its very widely used as a library of manipulating sparse volumetric data. In addition to Ken Museth's Keynote, I also attended Papers 2 - Waves. I was only familiar with J. Tessendorf's Work (Clemson) prior to coming to SCA 2020, its very refreshing to see new development on procedural generation of ocean waves.
 
 \end{document}
 
