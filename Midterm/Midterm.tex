@@ -147,27 +147,20 @@ Where this will take in point $(x, y, z, 1)^T$ to $(nx, ny, nz, -z)^T$, After di
 \answer{4 -- Creating Similarity Transform to Provide Cheap Shadow Projection}
 
 \begin{center}
-\includegraphics[width=16cm, height=11cm]{q4-diagram.png}
+\includegraphics[width=7cm, height=6cm]{q4-diagram.png}
 \end{center}
 
-As shown above, a point light project point $p\in \mathbb{R}^3$ onto the plane with normal $n$ at $p'$. We let $b$ be the origin of the canonical basis and $n$ be the z-axis
+As shown above, a point light project $a \in \mathbb{R}^3$ point $p\in \mathbb{R}^3$ onto the plane with normal $\vec{n}$ at $p'$. We let $b$ be the origin of the canonical basis and $\vec{n}$ be the z-axis
 
-$L_{ap} = L + (p-a)t$
+\begin{enumerate}
+    \item Using coordFrame() from Q1, we can transform $a,b,p$ from world frame to camera frame: $F = coordFrame(\vec{n},a)^{-1}$
+    \item We let $\vec{n}$ be our z axis. We then find the near plane's position with b: $\vec{n}=-b.z$
+    \item We then project onto the ground plane using the projection matrix P from Q3
+    \item $p' = FPF^{-1}p$
+\end{enumerate}
 
-$L_{nb} = b+nt$
 
-We let $L_{ap} = L_{nb}$ and find their intersection point $c$. 
 
-Case 1:
-If $c$ is below $b$ (see figure above), then we can construct a new frame matrix $F$ by point $c$ and $-\vec{n}$
-
-The coordinate of p is $F^{-1}p$, and its projection $p' = PF^{-1}p$, where P is the projection matrix from Q3. Using similarity transform, we can get $p'=FPF^{-1}p$ in the canonical basis.
-
-Case 2:
-If $c$ is above $b$ then we construct $F$ with $c$ and $\vec{n}$, we can get $p' = FPF^{-1}p$ in the canonical basis
-
-Case 3:
-If $c$ is at b, then $p' = b$
 
 % PROBLEM 5
 
@@ -268,8 +261,6 @@ void main() {
 // NormalForFP= normalize(tmp.xyz)
 NormalForFP = MinvT * VinvT * VertexNormal; 
 
-// FIX: Should use VinvT instead of V
-// PositionForFP = vec4(VinvT,0) * M * VertexPosition
 PositionForFP = V * M * VertexPosition;
 gl_Position = P * V * M * VertexPosition;
 
