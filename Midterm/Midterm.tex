@@ -124,7 +124,7 @@ Project $u$ onto yz-plane to get $u'$ and rotate by $\alpha$ in order to get $u$
 
 $u'=\sqrt{q^2+r^2}$, $cos\alpha = r/u' $ $sin\alpha = q/u'$
 $ Rx = \begin{pmatrix}
-1 & 0 & 0 & -x_1\\
+1 & 0 & 0 & 0\\
 0 & \frac{r}{u'} & -\frac{q}{u'} & 0\\
 0 & \frac{q}{u'} & \frac{r}{u'} & 0\\
 0 & 0 & 0 & 1
@@ -164,7 +164,7 @@ n & 0 & 0 & 0\\
 0 & 0 & -1 & 0
 \end{pmatrix}$
 
-Where this will take in point $(x, y, z, -1)^T$ to $(nx, ny, nz, -z)^T$, After dividing by the $z$ coordinate we have $(-nx/z,-ny/z,n,-1)$ which is the desired point of the near plane
+Where this will take in point $(x, y, z, 1)^T$ to $(nx, ny, nz, -z)^T$, After dividing by the $z$ coordinate we have $(-nx/z,-ny/z,-n,1)$ which is the desired point of the near plane
 
 
 
@@ -172,7 +172,28 @@ Where this will take in point $(x, y, z, -1)^T$ to $(nx, ny, nz, -z)^T$, After d
 
 \answer{4 -- Creating Similarity Transform to Provide Cheap Shadow Projection}
 
+\begin{center}
+\includegraphics[width=13cm, height=10cm]{q4-diagram.png}
+\end{center}
 
+As shown in (1) a point light project point $p\in \mathbb{R}^3$ onto the plane with normal $n$ at $p'$. We let x be the origin of the canonical basis and $n$ be the z-axis
+
+$L_{LP} = L + (p-L)t$
+
+$L_n = x+nt$
+
+We let $L_{LP} = L_n$ and find their intersection point $o$.
+
+Case 1:
+If $o$ above $x$, then by Q1 we can construct a new frame, and its frame matrix $F$ by point o and $\vec{n}$ then consider the plane to be the near plane with distance n. 
+
+The coordinate of p is $F^{-1}p$, and projection $PF^{-1}p$, where P is the projection matrix from Q3. Using similarity transform, $p'=FPF^{-1}p$ in the canonical basis
+
+Case 2:
+If $o$ is below $x$ then construct $F$ with $o$ and $-\vec{n}$, we can get $p' = FPF^{-1}p$
+
+Case 3:
+If $o$ is at x, then $p' = x$
 
 % PROBLEM 5
 
@@ -300,11 +321,11 @@ out vec4 FragColor;
 
 void main() {
 
-vec3 LightDirection = PositionForFP - LightPosition; // Should change to LightPosition - PositionForFP
+vec3 LightDirection = PositionForFP - LightPosition; // Should change to LightDirection = normalize(LightPosition - PositionForFP)
 
 float diffuse = dot( NormalForFP, LightDirection ); // Should change to max(dot(NormalForFP, LightDirection), 0)
 
-vec3 ViewDirection = vec3(0,0,0) - PositionForFP;
+vec3 ViewDirection = vec3(0,0,0) - PositionForFP; // Should change to normalize (vec3(0,0,0) - PositionForFP)
 
 HalfVector = (LightDirection + ViewDirection) / 2; // Should change to normalize (LightDirection + ViewDirection)
 
@@ -334,7 +355,7 @@ FragColor = vec4( rgb, 1 );
 % PROBLEM 8
 
 \answer{8 -- Ken Museth Keynote}
-Yes, I actually looked into his work of OpenVDB, apparently its very widely used as a library of manipulating sparse volumetric data.
+Yes, I actually looked into his work of OpenVDB, apparently its very widely used as a library of manipulating sparse volumetric data. In addition to Ken Museth's Keynote, I also attended Papers 2 Waves. I was only familiar with J. Tessendorf's Work (Clemson) prior to coming to SCA 2020, its very refreshing to see new development on procedural generation of ocean waves.
 
 \end{document}
 
