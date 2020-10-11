@@ -11,6 +11,7 @@
 \usepackage{latexsym}
 \usepackage{enumerate}
 \usepackage{listings}
+\usepackage{graphicx}
 \setlength{\parskip}{1pc}
 \setlength{\parindent}{0pt}
 \setlength{\topmargin}{-3pc}
@@ -81,17 +82,17 @@ Matrix4d coordFrame( const Vec3f &n, const Vec3f &p)
   // if it is near x axis
   Vec3f s,t;
   if(n.x > 0.9f) {
-    s = Vec3f (0.0 f , 1.0 f , 0.0 f );
+    s = Vec3f (0.0 f, 1.0 f, 0.0 f );
   } else {
     s = Vec3f (1.0 f, 0.0 f, 0.0 f);
   }
   s -= n* dot(s, n); // make s orthogonal to n
   s *= rsqrt(dot(s, s)); // normalize s
-  t = cross(n, s)
+  t = cross(n, s);
   return (new double[] {
-    x.x, y.x, z.x, p.x,
-    x.y, y.y, z.y, p.y,
-    x.z, y.z, z.z, p.z
+    t.x, s.x, n.x, p.x,
+    t.y, s.y, n.y, p.y,
+    t.z, s.z, n.z, p.z
     0, 0, 0, 1
   })
 }
@@ -163,7 +164,7 @@ n & 0 & 0 & 0\\
 0 & 0 & -1 & 0
 \end{pmatrix}$
 
-Where this will take in point $(x, y, z, -1)^T$ to $(nx, ny, nz, -z)^T$, After dividing by the $w$ coordinate we have $(-nx/w,-ny/z-n,1)$ which is the desired point of the near plane
+Where this will take in point $(x, y, z, -1)^T$ to $(nx, ny, nz, -z)^T$, After dividing by the $z$ coordinate we have $(-nx/z,-ny/z,n,-1)$ which is the desired point of the near plane
 
 
 
@@ -201,12 +202,53 @@ $n=\frac{\epsilon}{5}$
 
 % PROBLEM 6
 
-\answer{6 -- Where should a point light be placed?}
+\answer{6 -- Where Should the Point Light Be Placed?}
+\begin{center}
+\includegraphics[width=14cm, height=19cm]{q6-diagram.png}
+\end{center}
+Where p is the light position (unknown), r is the center of the circle, q is the brightest spot of a
+Blinn-Phong specular highlight.
 
+We need to find the position of $q$ first. Since we know $y_q = 0.6$, we get:
+
+$x_q^2+0.6^2=1$
+
+$x_q =0.8$
+
+Thus, $z_q = -2+0.8 = 1.2$
+
+Now we can find the view direction $v$ and the normal $n$.
+
+$n = q-r = \begin{pmatrix}0 \\0.6\\0.8\\0\end{pmatrix}$
+
+$v = eye - q = \begin{pmatrix}0 \\-0.6\\1.2\\0\end{pmatrix}$
+
+Now let's find $l$. Suppose $u$ is a vector such that $v - 2u = l$
+
+$u = v - proj_n v = \begin{pmatrix}0 \\-0.6\\1.2\\0\end{pmatrix}- \begin{pmatrix}0\\0.36\\0.48\\0\end{pmatrix} =\begin{pmatrix}0\\-0.96\\0.72\\0\end{pmatrix}$
+
+
+$l = v-2u=\begin{pmatrix}0 \\-0.6\\1.2\\0\end{pmatrix}-2\begin{pmatrix}0 \\-0.96\\0.72\\0\end{pmatrix}=\begin{pmatrix}0 \\1.32\\-0.24\\0\end{pmatrix}$
+
+Now let's find out the location of the Light
+
+Parametric equations of the direction: $x=0 \quad y=0.6+1.32t \quad z=-1.2-0.24t$
+
+Equation of the ceiling:$y=3$
+
+$3=0.6+1.32t$
+
+$t=\frac{20}{11}$
+
+$z=-1.2 - 0.24t$
+
+$z=-\frac{18}{11}$
+
+So the light should be at $\begin{pmatrix}0\\3\\-\frac{18}{11}\\1\end{pmatrix}$
 
 % PROBLEM 7
 
-\answer{7 -- Find Bug in this Bling Phong Implementation}
+\answer{7 -- Debug the Given Bling Phong Implementation}
 
 Vertex Shader
 \begin{lstlisting}
