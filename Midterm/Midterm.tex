@@ -147,27 +147,27 @@ Where this will take in point $(x, y, z, 1)^T$ to $(nx, ny, nz, -z)^T$, After di
 \answer{4 -- Creating Similarity Transform to Provide Cheap Shadow Projection}
 
 \begin{center}
-\includegraphics[width=13cm, height=10cm]{q4-diagram.png}
+\includegraphics[width=16cm, height=11cm]{q4-diagram.png}
 \end{center}
 
-As shown in (1) a point light project point $p\in \mathbb{R}^3$ onto the plane with normal $n$ at $p'$. We let x be the origin of the canonical basis and $n$ be the z-axis
+As shown above, a point light project point $p\in \mathbb{R}^3$ onto the plane with normal $n$ at $p'$. We let $b$ be the origin of the canonical basis and $n$ be the z-axis
 
-$L_{LP} = L + (p-L)t$
+$L_{ap} = L + (p-a)t$
 
-$L_n = x+nt$
+$L_{nb} = b+nt$
 
-We let $L_{LP} = L_n$ and find their intersection point $o$.
+We let $L_{ap} = L_{nb}$ and find their intersection point $c$. 
 
 Case 1:
-If $o$ above $x$, then by Q1 we can construct a new frame, and its frame matrix $F$ by point o and $\vec{n}$ then consider the plane to be the near plane with distance n. 
+If $c$ is below $b$ (see figure above), then we can construct a new frame matrix $F$ by point $c$ and $-\vec{n}$
 
-The coordinate of p is $F^{-1}p$, and projection $PF^{-1}p$, where P is the projection matrix from Q3. Using similarity transform, $p'=FPF^{-1}p$ in the canonical basis
+The coordinate of p is $F^{-1}p$, and its projection $p' = PF^{-1}p$, where P is the projection matrix from Q3. Using similarity transform, we can get $p'=FPF^{-1}p$ in the canonical basis.
 
 Case 2:
-If $o$ is below $x$ then construct $F$ with $o$ and $-\vec{n}$, we can get $p' = FPF^{-1}p$
+If $c$ is above $b$ then we construct $F$ with $c$ and $\vec{n}$, we can get $p' = FPF^{-1}p$ in the canonical basis
 
 Case 3:
-If $o$ is at x, then $p' = x$
+If $c$ is at b, then $p' = b$
 
 % PROBLEM 5
 
@@ -268,7 +268,8 @@ void main() {
 // NormalForFP= normalize(tmp.xyz)
 NormalForFP = MinvT * VinvT * VertexNormal; 
 
-// FIX: PositionForFP = VinvT * VertexPosition
+// FIX: Should use VinvT instead of V
+// PositionForFP = vec4(VinvT,0) * M * VertexPosition
 PositionForFP = V * M * VertexPosition;
 gl_Position = P * V * M * VertexPosition;
 
@@ -293,14 +294,14 @@ out vec4 FragColor;
 void main() {
 
 // FIX: Direction should go to the light.
-// Should change to normalize(LightPosition - PositionForFP)
+// Should change to normalize(LightPosition - PositionForFP.xyz)
 vec3 LightDirection = PositionForFP - LightPosition;
 
 // FIX: Diffuse may go negative in the original implementation.
 // Should change to max(dot(NormalForFP, LightDirection), 0)
 float diffuse = dot( NormalForFP, LightDirection ); 
 
-// FIX: Should change to normalize (vec3(0,0,0) - PositionForFP)
+// FIX: Should change to normalize (vec3(0,0,0) - PositionForFP.xyz)
 vec3 ViewDirection = vec3(0,0,0) - PositionForFP; 
 
 // FIX: HalfVector not unit verctor, also shouldn't divide by 2.
@@ -315,7 +316,8 @@ specular = 0.0;
 specular = pow( specular, Shininess );
 }
 vec3 scatteredLight = kd * LightColor * diffuse;
-// FIX: ks default to 1
+// FIX: ks default to 1 here
+// reflectedLight = ks * LightColor * specular
 vec3 reflectedLight = LightColor * specular;
 vec3 rgb = min( scatteredLight + reflectedLight, vec3(1,1,1) );
 
