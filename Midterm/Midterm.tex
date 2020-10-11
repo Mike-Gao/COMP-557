@@ -154,9 +154,17 @@ As shown above, a point light project $a \in \mathbb{R}^3$ point $p\in \mathbb{R
 
 \begin{enumerate}
     \item Using coordFrame() from Q1, we can transform $a,b,p$ from world frame to camera frame: $F = coordFrame(\vec{n},a)^{-1}$
-    \item We let $\vec{n}$ be our z axis. We then find the near plane's position with b: $\vec{n}=-b.z$
-    \item We then project onto the ground plane using the projection matrix P from Q3
-    \item $p' = FPF^{-1}p$
+    \item We let $\vec{n}$ be our z axis. We then find the near plane's position with b: $n=b.z$
+    \item Since b is in camera frame and we need its coordinate in world frame, we then project onto the ground plane using the projection matrix P from Q3 
+
+$P = \begin{pmatrix}
+b.z & 0 & 0 & 0\\
+0 & b.z & 0 & 0\\
+p & 0 & b.z & 0\\
+0 & 0 & -1 & 0
+\end{pmatrix}$
+
+    \item $p' = F^{-1}PFp$
 \end{enumerate}
 
 
@@ -307,12 +315,12 @@ specular = 0.0;
 specular = pow( specular, Shininess );
 }
 vec3 scatteredLight = kd * LightColor * diffuse;
-// FIX: ks default to 1 here
+// FIX: ks is 1 here, this may be unintentional
 // reflectedLight = ks * LightColor * specular
 vec3 reflectedLight = LightColor * specular;
 vec3 rgb = min( scatteredLight + reflectedLight, vec3(1,1,1) );
-
 FragColor = vec4( rgb, 1 );
+
 }
 \end{minted}
 
